@@ -9,6 +9,7 @@ html, body {
   min-width: 100%;
   font-family: Tahoma, sans-serif;
   overflow: hidden;
+  font-size: 15px;
 }
 
 body {
@@ -126,6 +127,11 @@ h2 {
 .farm__crop-label {
   display: none;
   font-weight: bold;
+  font-size: 15px;
+}
+
+.farm__input {
+  padding: 5px;
 }
 
 .farm__crop-label--active {
@@ -173,6 +179,8 @@ h2 {
   padding: 15px;
   cursor: pointer;
   transition: transform 0.1s;
+  font-family: Tahoma, sans-serif;
+  font-size: 15px;
 }
 
 .farm__reset:hover {
