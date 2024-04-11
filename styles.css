@@ -8,22 +8,44 @@ html, body {
   min-height: 100%;
   min-width: 100%;
   font-family: Tahoma, sans-serif;
+  overflow: hidden;
+}
+
+body {
+  background-image: repeating-linear-gradient(45deg, #fff, #fff 30px, #f2f2f2 30px, #f2f2f2 60px);
 }
 
 h2 {
   margin-top: 0;
 }
 
-.farm__content {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
+.outline__large {
   border: 3px solid #000;
   border-radius: 15px;
   outline: 1px solid #000;
   outline-offset: -7px;
+  background-color: #fff;
+}
+
+.outline__small {
+  border: 3px solid #000;
+  border-radius: 7px;
+  outline: 1px solid #000;
+  outline-offset: -5px;
+  background-color: #fff;
+}
+
+.hidden {
+  display: none;
+}
+
+.farm__content {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
   padding: 30px;
   position: relative;
+  background-color: #fff;
 }
 
 .farm__advisor {
@@ -76,10 +98,6 @@ h2 {
 .farm__crop {
   width: 50px;
   height: 50px;
-  border: 3px solid #000;
-  border-radius: 7px;
-  outline: 1px solid #000;
-  outline-offset: -5px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -150,10 +168,6 @@ h2 {
 /* BEGIN: Farm Other */
 .farm__reset {
   width: 100%;
-  border-radius: 7px;
-  border: 3px solid #000;
-  outline: 1px solid #000;
-  outline-offset: -5px;
   background-color: #fff;
   text-transform: uppercase;
   padding: 15px;
@@ -167,3 +181,77 @@ h2 {
   transform: scale(1.05);
 }
 /* END: Farm Other */
+
+/* BEGIN: Farm Info */
+.info__toggle {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  text-decoration: none;
+  color: #000;
+  line-height: 1;
+}
+
+.info__modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.7);
+  opacity: 0;
+  display: block;
+  overflow: hidden;
+  max-height: 0px;
+  transition: opacity 0.5s, max-height 0s;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+.info__modal--active {
+  opacity: 1;
+  max-height: none;
+}
+
+.info__content {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  max-width: 450px;
+  word-wrap: break-word;
+}
+
+.info__header {
+  margin-bottom: 5px;
+}
+
+.info__copy-wrapper {
+  padding: 10px;
+  margin-top: 1em;
+}
+
+.info__copy {
+  margin-top: 0.5em;
+  margin-bottom: 0em;
+}
+
+.info__list {
+  margin: 0;
+}
+
+.info__attributions {
+  padding: 0;
+  list-style: none;
+}
+
+.info__attribution {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 5px;
+}
+
+/* END: Farm Info */

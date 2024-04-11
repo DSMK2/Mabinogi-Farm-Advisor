@@ -11,7 +11,7 @@
 </head>
 
 <body>
-	<div class="farm__content">
+	<div class="farm__content outline__large">
 		<!-- BEGIN: Header -->
 		<div class="farm__header">
 			<img class="farm__logo" src="images/logo_mabinogi.png" title="Mabinogi">
@@ -23,11 +23,11 @@
 			<!-- BEGIN: Inputs -->
 			<form class="farm__form">
 				<div class="farm__crops">
-					<a class="farm__crop" href="#" title="Tomato"><img src="images/crop_tomato.png" alt="Tomato"></a>
-					<a class="farm__crop" href="#" title="Cabbage"><img src="images/crop_cabbage.png" alt="Cabbage"></a>
-					<a class="farm__crop" href="#" title="Eggplant"><img src="images/crop_eggplant.png" alt="Eggplant"></a>
-					<a class="farm__crop" href="#" title="Pumpkin"><img src="images/crop_pumpkin.png" alt="Pumpkin"></a>
-					<a class="farm__crop" href="#" title="Strawberry"><img src="images/crop_strawberry.png" alt="Strawberry"></a>
+					<a class="farm__crop outline__small" href="#" title="Tomato"><img src="images/crop_tomato.png" alt="Tomato"></a>
+					<a class="farm__crop outline__small" href="#" title="Cabbage"><img src="images/crop_cabbage.png" alt="Cabbage"></a>
+					<a class="farm__crop outline__small" href="#" title="Eggplant"><img src="images/crop_eggplant.png" alt="Eggplant"></a>
+					<a class="farm__crop outline__small" href="#" title="Pumpkin"><img src="images/crop_pumpkin.png" alt="Pumpkin"></a>
+					<a class="farm__crop outline__small" href="#" title="Strawberry"><img src="images/crop_strawberry.png" alt="Strawberry"></a>
 				</div>
 				<ul class="farm__crop-labels">
 					<li class="farm__crop-label farm__crop-label--active" data-crop="">No crop selected</li>
@@ -96,11 +96,42 @@
 
 			<!-- BEGIN: Other -->
 			<div class="farm__other">
-				<button class="farm__reset">Reset</button>
+				<button class="farm__reset outline__small">Reset</button>
 			</div>
 			<!-- END: Other -->
 		</div>
+
+		<a class="info__toggle" href="#" title="Info">[?]</a>
 	</div>
+
+	<!-- BEGIN: Info -->
+	<div class="info__modal">
+		<div class="info__content outline__large">
+			<h2 class="info__header hidden">Info</h2>
+			<h3 class="info__header">How to Use</h3>
+			<ol class="info__list">
+				<li>Click a crop icon</li>
+				<li>Enter current H2O, FERT, and BUG values</li>
+				<li>Execute the recommended action</li>
+			</ol>
+			<div class="info__copy-wrapper outline__large">
+				<p class="info__copy">Crop and values are saved, so you don't need to reenter values every time you visit the tool.</p>
+				<p class="info__copy">Once you're done growing the crop, press RESET to clear saved data for another run.</p>
+			</div>
+			<h3 class="info__header">Attribution</h3>
+			<ul class="info__list info__attributions">
+				<li class="info__attribution">
+					<em>Mabinogi World Wiki</em>
+					<a href="https://wiki.mabinogiworld.com/view/Farming" title="Farming">https://wiki.mabinogiworld.com/view/Farming</a>
+				</li>
+				<li class="info__attribution">
+					<em>Original Farm Advisor</em>
+					<a href="https://web.archive.org/web/20181114063001/http://mabinogi.x10.mx:80/farming_advisor" title="Farm Advisor">https://web.archive.org/web/20181114063001/http://mabinogi.x10.mx:80/farming_advisor</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<!-- END: Info -->
 </body>
 
 </html>
