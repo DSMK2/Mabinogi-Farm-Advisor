@@ -78,6 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
       cropInputs.crop = farmVals.crop;
 
       resetCrops();
+      resetCropLabels();
 
       document.querySelector('.farm__crop[title="' + cropInputs.crop + '" i]').classList.add('farm__crop--active');
       document.querySelector('.farm__crop-label[data-crop="' + cropInputs.crop + '" i]').classList.add('farm__crop-label--active');
@@ -125,7 +126,9 @@ document.addEventListener('DOMContentLoaded', function () {
       DOMCrops.forEach(function (DOMCrop) {
         DOMCrop.classList.remove('farm__crop--active');
       });
+    }
 
+    function resetCropLabels() {
       DOMCropLabels.forEach(function (DOMCropLabel) {
         DOMCropLabel.classList.remove('farm__crop-label--active');
       });
@@ -135,6 +138,12 @@ document.addEventListener('DOMContentLoaded', function () {
       DOMTodos.forEach(function (DOMTodo) {
         DOMTodo.classList.remove('todo--active');
       })
+    }
+
+    function setCropLabel(crop) {
+      resetCropLabels();
+
+      document.querySelector('.farm__crop-label[data-crop="' + crop + '" i]').classList.add('farm__crop-label--active');
     }
 
     function updateTodo() {
@@ -193,12 +202,23 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         resetCrops();
+        resetCropLabels();
 
         DOMCrop.classList.add('farm__crop--active');
         document.querySelector('.farm__crop-label[data-crop="' + cropName + '" i]').classList.add('farm__crop-label--active');
 
         DOMCropSelector.value = cropName;
         DOMCropSelector.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+
+      DOMCrop.addEventListener('mouseenter', function () {
+        var cropName = DOMCrop.getAttribute('title').toLowerCase();
+        setCropLabel(cropName);
+      });
+
+      DOMCrop.addEventListener('mouseleave', function () {
+        resetCropLabels();
+        document.querySelector('.farm__crop-label[data-crop="' + cropInputs.crop + '" i]').classList.add('farm__crop-label--active');
       });
     });
 
@@ -211,6 +231,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       resetData();
       resetCrops();
+      resetCropLabels();
       resetTodos();
 
       DOMCropLabels[0].classList.add('farm__crop-label--active')
@@ -232,6 +253,11 @@ document.addEventListener('DOMContentLoaded', function () {
       DOMForm.the_h2o.dispatchEvent(new Event('change'));
       DOMForm.the_fert.dispatchEvent(new Event('change'));
       DOMForm.the_bug.dispatchEvent(new Event('change'));
+    });
+
+    window.addEventListener('blur', function () {
+      resetCropLabels();
+      document.querySelector('.farm__crop-label[data-crop="' + cropInputs.crop + '" i]').classList.add('farm__crop-label--active');
     });
     /////////////////////////////////////////////////////////////////////////////////
     // END: Events
@@ -260,13 +286,13 @@ document.addEventListener('DOMContentLoaded', function () {
       DOMInfoModal.classList.add('info__modal--active');
     });
 
-    DOMInfoModal.addEventListener('click', function(e) {
+    DOMInfoModal.addEventListener('click', function (e) {
       e.preventDefault();
 
       DOMInfoModal.classList.remove('info__modal--active');
     });
 
-    window.addEventListener('keydown', function(e) {
+    window.addEventListener('keydown', function (e) {
 
       if (e.code === 'Escape' && DOMInfoModal.classList.contains('info__modal--active')) {
         DOMInfoModal.classList.remove('info__modal--active');
