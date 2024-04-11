@@ -3,6 +3,18 @@
  * https://web.archive.org/web/20181114063001/http://mabinogi.x10.mx:80/farming_advisor 
  */
 document.addEventListener('DOMContentLoaded', function () {
+  // @SEE: https://stackoverflow.com/questions/16427636/check-if-localstorage-is-available
+  var isLocalStorageAvailable = (function () {
+    var test = 'test'
+    try {
+      localStorage.setItem(test, test);
+      localStorage.removeItem(test);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  })();
+
   /////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////
   // BEGIN: Farm Advisor
@@ -63,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var farmValsRaw;
       var farmVals;
 
-      if (!localStorage) {
+      if (!isLocalStorageAvailable) {
         console.error('localStorage not available');
         return;
       }
@@ -102,7 +114,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function saveData() {
-      if (!localStorage) {
+      if (!isLocalStorageAvailable) {
         console.error('localStorage not available');
         return;
       }
@@ -111,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function resetData() {
-      if (!localStorage) {
+      if (!isLocalStorageAvailable) {
         console.error('localStorage not available');
         return;
       }
@@ -291,7 +303,7 @@ document.addEventListener('DOMContentLoaded', function () {
       DOMInfoModal.classList.remove('info__modal--active');
     });
 
-    DOMInfoModal.querySelector('.info__content').addEventListener('click', function(e) {
+    DOMInfoModal.querySelector('.info__content').addEventListener('click', function (e) {
       e.stopPropagation();
     });
 
