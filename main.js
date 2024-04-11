@@ -18,6 +18,24 @@ document.addEventListener('DOMContentLoaded', function () {
     var DOMTodos = Array.prototype.slice.call(document.querySelectorAll('.todo'), 0);
     // Vars
     var cropValues = {
+      tomato: {
+        growthRate: 1.37,
+        dehydration: 0.10,
+        malnourishment: 0.25,
+        bug: 0.40
+      },
+      cabbage: {
+        growthRate: 1.11,
+        dehydration: 0.20,
+        malnourishment: 0.30,
+        bug: 0.40
+      },
+      eggplant: {
+        growthRate: 0.99,
+        dehydration: 0.15,
+        malnourishment: 0.25,
+        bug: 0.40
+      },
       pumpkin: {
         growthRate: 0.99,
         dehydration: 0.25,
@@ -29,24 +47,6 @@ document.addEventListener('DOMContentLoaded', function () {
         dehydration: 0.40,
         malnourishment: 0.60,
         bug: 0.40
-      },
-      tomato: {
-        growthRate: 1.37,
-        dehydration: 0.10,
-        malnourishment: 0.25,
-        bug: 0.40
-      },
-      eggplant: {
-        growthRate: 0.99,
-        dehydration: 0.15,
-        malnourishment: 0.25,
-        bug: 0.40
-      },
-      cabbage: {
-        growthRate: 1.11,
-        dehydration: 0.20,
-        malnourishment: 0.30,
-        bug: 0.40
       }
     };
     var cropInputs = {
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function () {
       h2o: 0,
       fert: 0,
       bug: 0
-    }
+    };
 
     /////////////////////////////////////////////////////////////////////////////////
     // BEGIN: Local Storage Handling
@@ -121,7 +121,6 @@ document.addEventListener('DOMContentLoaded', function () {
     /////////////////////////////////////////////////////////////////////////////////
     // END: Local Storage Handling
     /////////////////////////////////////////////////////////////////////////////////
-
     function resetCrops() {
       DOMCrops.forEach(function (DOMCrop) {
         DOMCrop.classList.remove('farm__crop--active');
@@ -290,6 +289,10 @@ document.addEventListener('DOMContentLoaded', function () {
       e.preventDefault();
 
       DOMInfoModal.classList.remove('info__modal--active');
+    });
+
+    DOMInfoModal.querySelector('.info__content').addEventListener('click', function(e) {
+      e.stopPropagation();
     });
 
     window.addEventListener('keydown', function (e) {
