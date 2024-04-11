@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Mabinogi Farm Advisor</title>
+	<script src="main.js"></script>
+	<link rel="stylesheet" href="styles.css">
+	<link rel="shortcut icon" href="favicon_mw.ico">
+</head>
+
+<body>
+	<div class="farm__content">
+		<!-- BEGIN: Header -->
+		<div class="farm__header">
+			<img class="farm__logo" src="images/logo_mabinogi.png" title="Mabinogi">
+			<h1>Mabinogi<br><span>Farm Advisor</span></h1>
+		</div>
+		<!-- END: Header -->
+
+		<div class="farm__advisor">
+			<!-- BEGIN: Inputs -->
+			<form class="farm__form">
+				<div class="farm__crops">
+					<a class="farm__crop" href="#" title="Tomato"><img src="images/crop_tomato.png" alt="Tomato"></a>
+					<a class="farm__crop" href="#" title="Cabbage"><img src="images/crop_cabbage.png" alt="Cabbage"></a>
+					<a class="farm__crop" href="#" title="Eggplant"><img src="images/crop_eggplant.png" alt="Eggplant"></a>
+					<a class="farm__crop" href="#" title="Pumpkin"><img src="images/crop_pumpkin.png" alt="Pumpkin"></a>
+					<a class="farm__crop" href="#" title="Strawberry"><img src="images/crop_strawberry.png" alt="Strawberry"></a>
+				</div>
+				<ul class="farm__crop-labels">
+					<li class="farm__crop-label farm__crop-label--active" data-crop="">No crop selected</li>
+					<li class="farm__crop-label" data-crop="tomato">Tomato</li>
+					<li class="farm__crop-label" data-crop="cabbage">Cabbage</li>
+					<li class="farm__crop-label" data-crop="eggplant">Eggplant</li>
+					<li class="farm__crop-label" data-crop="pumpkin">Pumpkin</li>
+					<li class="farm__crop-label" data-crop="strawberry">Strawberry</li>
+				</ul>
+				<label class="farm__label" for="the_crop">Crop</label>
+				<select name="the_crop">
+					<option value="">Select Crop</option>
+					<option value="tomato">Tomato</option>
+					<option value="cabbage">Cabbage</option>
+					<option value="eggplant">Eggplant</option>
+					<option value="pumpkin">Pumpkin</option>
+					<option value="strawberry">Strawberry</option>
+				</select>
+				<label class="farm__label for="the_h20">H2O</label>
+				<input name="the_h2o" value="40" size="3" type="number">
+				<label class="farm__label for="the_fert">FERT</label>
+				<input name="the_fert" value="30" size="3" type="number">
+				<label class="farm__label for="the_bug">BUG</label>
+				<input name="the_bug" value="80" size="3" type="number">
+			</form>
+			<!-- END: Outputs -->
+
+			<!-- BEGIN: Outputs-->
+			<div class="farm__outputs">
+				<ul class="farm__todo">
+					<li class="todo todo--none todo--active"><img class="todo__image" src="images/action_unknown.png" alt="Unknown"></li>
+					<li class="todo todo--water">
+						<img class="todo__image" src="images/action_water.png" alt="Watering">
+						<div class="todo__copy">
+							<ul>
+								<li>Water</li>
+								<li>+5 after 20 Minutes</li>
+							</ul>
+						</div>
+					</li>
+					<li class="todo todo--fertilize">
+						<img class="todo__image" src="images/action_fertilize.png" alt="Fertilizing">
+						<div class="todo__copy">
+							<ul>
+								<li>Fertilize</li>
+								<li>+7 after 30 Minutes</li>
+							</ul>
+						</div>
+					</li>
+					<li class="todo todo--bugs">
+						<img class="todo__image" src="images/action_bug.png" alt="Bug Catching">
+						<div class="todo__copy">
+							<ul>
+								<li>Remove Bugs</li>
+								<li>+11 after 40 Minutes</li>
+							</ul>
+						</div>
+					</li>
+				</ul>
+
+				<div class="farm__growth-rate-wrapper">
+					<strong>Current growth rate:&nbsp;</strong><span class="farm__growth-rate">0.00</span>%<span>&nbsp;per hour</span>
+				</div>
+			</div>
+			<!-- END: Outputs -->
+
+			<!-- BEGIN: Other -->
+			<div class="farm__other">
+				<button class="farm__reset">Reset</button>
+			</div>
+			<!-- END: Other -->
+		</div>
+	</div>
+</body>
+
+</html>

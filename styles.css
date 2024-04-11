@@ -1,0 +1,169 @@
+html, body {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  min-height: 100%;
+  min-width: 100%;
+  font-family: Tahoma, sans-serif;
+}
+
+h2 {
+  margin-top: 0;
+}
+
+.farm__content {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  border: 3px solid #000;
+  border-radius: 15px;
+  outline: 1px solid #000;
+  outline-offset: -7px;
+  padding: 30px;
+  position: relative;
+}
+
+.farm__advisor {
+  display: flex;
+  flex-direction: column;
+}
+
+.farm__header {
+  display: flex;
+  line-height: 0.75;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+.farm__header span {
+  font-size: 20px;
+}
+
+.farm__logo {
+  height: 50px;
+  margin-right: 15px;
+  width: auto;
+}
+
+/* BEGIN: Farm Form */
+.farm__form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.farm__label {
+  margin: 5px 0px;
+  font-weight: bold;
+}
+
+.farm__label:nth-of-type(2) {
+  margin-top: 0;
+}
+
+.farm__crops {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.farm__crop {
+  width: 50px;
+  height: 50px;
+  border: 3px solid #000;
+  border-radius: 7px;
+  outline: 1px solid #000;
+  outline-offset: -5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  opacity: 0.2;
+  margin: 1px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transform-origin: 50% 50%;
+  transform: scale(0.95);
+  transition: transform 0.1s;
+}
+
+.farm__crop--active,
+.farm__crop:hover {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.farm__crop-labels {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 15px;
+}
+
+.farm__crop-label {
+  display: none;
+  font-weight: bold;
+}
+
+.farm__crop-label--active {
+  display: block;
+}
+
+[for="the_crop"],
+[name="the_crop"] {
+  display: none;
+}
+/* END: Farm Form */
+
+/* BEGIN: Farm Todo */
+.farm__outputs {
+  margin-bottom: 15px;
+}
+
+.farm__todo {
+  list-style: none;
+  padding: 0;
+  margin-top: 0;
+}
+
+.todo {
+  display: none;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: center;
+}
+
+.todo--active {
+  display: flex;
+}
+
+.todo__copy {
+  margin-left: 15px;
+}
+/* END: Farm Todo */
+
+/* BEGIN: Farm Other */
+.farm__reset {
+  width: 100%;
+  border-radius: 7px;
+  border: 3px solid #000;
+  outline: 1px solid #000;
+  outline-offset: -5px;
+  background-color: #fff;
+  text-transform: uppercase;
+  padding: 15px;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.farm__reset:hover {
+  background-color: #000;
+  color: #fff;
+  transform: scale(1.05);
+}
+/* END: Farm Other */
