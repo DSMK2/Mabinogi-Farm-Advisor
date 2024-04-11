@@ -1,4 +1,4 @@
-# [Mabinogi Farm Advisor](https://github.com/DSMK2/Mabinogi-Farm-Advisor)
+# [Mabinogi Farm Advisor](https://dsmk2.github.io/Mabinogi-Farm-Advisor/)
 
 ---
 
