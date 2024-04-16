@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   padding: 0;
   margin: 0;
   display: flex;
@@ -40,6 +41,19 @@ h2 {
   display: none;
 }
 
+.input {
+  padding: 5px;
+}
+
+.input__label {
+  margin: 5px 0px;
+  font-weight: bold;
+}
+
+.input__label:nth-of-type(2) {
+  margin-top: 0;
+}
+
 .farm__content {
   display: flex;
   flex-direction: column;
@@ -78,15 +92,6 @@ h2 {
   flex-direction: column;
   width: 100%;
   margin-bottom: 15px;
-}
-
-.farm__label {
-  margin: 5px 0px;
-  font-weight: bold;
-}
-
-.farm__label:nth-of-type(2) {
-  margin-top: 0;
 }
 
 .farm__crops {
@@ -130,9 +135,7 @@ h2 {
   font-size: 15px;
 }
 
-.farm__input {
-  padding: 5px;
-}
+
 
 .farm__crop-label--active {
   display: block;
@@ -142,6 +145,7 @@ h2 {
 [name="the_crop"] {
   display: none;
 }
+
 /* END: Farm Form */
 
 /* BEGIN: Farm Todo */
@@ -169,7 +173,56 @@ h2 {
 .todo__copy {
   margin-left: 15px;
 }
+
 /* END: Farm Todo */
+
+/* BEGIN: Time */
+.farm__time {
+  display: flex;
+  justify-content: stretch;
+  align-content: center;
+  align-items: center;
+}
+
+.farm__time>input {
+  flex-grow: 1;
+}
+
+.farm__time span {
+  font-weight: bold;
+}
+
+.time__header {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  margin-bottom: 5px;
+}
+
+.time__icon {
+  display: block;
+  height: auto;
+  width: 13px;
+}
+
+.time__copy {
+  margin-left: 5px;
+}
+
+.time__status-wrapper {
+  display: flex;
+  margin-left: 5px;
+}
+
+.time__status {
+  display: none;
+}
+
+.time__status--active {
+  display: block;
+}
+
+/* END: Time */
 
 /* BEGIN: Farm Other */
 .farm__reset {
@@ -188,6 +241,7 @@ h2 {
   color: #fff;
   transform: scale(1.05);
 }
+
 /* END: Farm Other */
 
 /* BEGIN: Farm Info */
@@ -206,7 +260,7 @@ h2 {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0,0,0,0.7);
+  background-color: rgba(0, 0, 0, 0.7);
   opacity: 0;
   display: block;
   overflow: hidden;

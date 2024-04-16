@@ -22,7 +22,7 @@
 			<div class="hidden" role="heading" aria-level="2">Advisor</div>
 
 			<!-- BEGIN: Inputs -->
-			<form class="farm__form">
+			<form class="farm__form farm__form--values">
 				<div class="farm__crops">
 					<a class="farm__crop outline__small" href="#" title="Tomato"><img src="images/crop_tomato.png" alt="Tomato"></a>
 					<a class="farm__crop outline__small" href="#" title="Cabbage"><img src="images/crop_cabbage.png" alt="Cabbage"></a>
@@ -46,11 +46,11 @@
 					<option value="pumpkin">Pumpkin</option>
 					<option value="strawberry">Strawberry</option>
 				</select>
-				<label class="farm__label" for="the_h2o">H2O</label>
+				<label class="input__label" for="the_h2o">H2O</label>
 				<input class="farm__input outline__small" name="the_h2o" value="40" type="number">
-				<label class="farm__label" for="the_fert">FERT</label>
+				<label class="input__label" for="the_fert">FERT</label>
 				<input class="farm__input outline__small" name="the_fert" value="30" type="number">
-				<label class="farm__label" for="the_bug">BUG</label>
+				<label class="input__label" for="the_bug">BUG</label>
 				<input class="farm__input outline__small" name="the_bug" value="80" type="number">
 			</form>
 			<!-- END: Outputs -->
@@ -94,8 +94,34 @@
 			</div>
 			<!-- END: Outputs -->
 
+			<!-- BEGIN: Clock-->
+			<div class="time__wrapper">
+				<div class="time__header">
+					<img class="time__icon" src="images/icon_clock.png" alt="">
+					<strong class="time__copy">Time Updates</strong>
+					<span class="time__status-wrapper">[
+						<span class="time__status time__status--active">Disabled</span>
+						<span class="time__status">Enabled</span>
+						]
+					</span>
+				</div>
+				<form class="farm__form farm__form--time">
+					<label class="input__label" for="time_date">Start Date</label>
+					<input class="farm__input outline__small" name="time_date" type="date">
+
+					<strong class="input__label">Start Time (00:00 - 24:00)</strong>
+					<div class="farm__time">
+						<input class="farm__input outline__small" name="time_hour" type="number" value="0" min="0" max="24">
+						<span>:</span>
+						<input class="farm__input outline__small" name="time_minute" type="number" value="0" min="0" max="60">
+					</div>
+				</form>
+			</div>
+			<!-- END: Clock -->
+
 			<!-- BEGIN: Other -->
 			<div class="farm__other">
+				<button class="outline__small">DO THE THING</button>
 				<button class="farm__reset outline__small">Reset</button>
 			</div>
 			<!-- END: Other -->
