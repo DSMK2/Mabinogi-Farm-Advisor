@@ -47,20 +47,28 @@
 					<option value="strawberry">Strawberry</option>
 				</select>
 				<label class="input__label" for="the_h2o">H2O</label>
-				<input class="farm__input outline__small" name="the_h2o" value="40" type="number">
+				<input class="input outline__small" name="the_h2o" value="40" type="number">
 				<label class="input__label" for="the_fert">FERT</label>
-				<input class="farm__input outline__small" name="the_fert" value="30" type="number">
+				<input class="input outline__small" name="the_fert" value="30" type="number">
 				<label class="input__label" for="the_bug">BUG</label>
-				<input class="farm__input outline__small" name="the_bug" value="80" type="number">
+				<input class="input outline__small" name="the_bug" value="80" type="number">
 			</form>
 			<!-- END: Outputs -->
 
 			<!-- BEGIN: Outputs-->
 			<div class="farm__outputs">
 				<ul class="farm__todo">
-					<li class="todo todo--none todo--active"><img class="todo__image" src="images/action_unknown.png" alt="Unknown"></li>
-					<li class="todo todo--water">
-						<img class="todo__image" src="images/action_water.png" alt="Watering">
+					<li class="todo todo--none todo--active">
+						<div class="todo__image-wrapper">
+							<img class="todo__image" src="images/action_unknown.png" alt="Unknown">
+							<span class="todo__progress">0</span>
+						</div>
+					</li>
+					<li class="todo todo--water" data-update-time="20" data-update-val="5" data-type="h2o">
+						<div class="todo__image-wrapper">
+							<img class="todo__image" src="images/action_water.png" alt="Watering">
+							<span class="todo__progress">0</span>
+						</div>
 						<div class="todo__copy">
 							<ul>
 								<li>Water</li>
@@ -68,8 +76,11 @@
 							</ul>
 						</div>
 					</li>
-					<li class="todo todo--fertilize">
-						<img class="todo__image" src="images/action_fertilize.png" alt="Fertilizing">
+					<li class="todo todo--fertilize" data-update-time="30" data-update-val="7" data-type="fert">
+						<div class="todo__image-wrapper">
+							<img class="todo__image" src="images/action_fertilize.png" alt="Fertilizing">
+							<span class="todo__progress">0</span>
+						</div>
 						<div class="todo__copy">
 							<ul>
 								<li>Fertilize</li>
@@ -77,8 +88,11 @@
 							</ul>
 						</div>
 					</li>
-					<li class="todo todo--bugs">
-						<img class="todo__image" src="images/action_bug.png" alt="Bug Catching">
+					<li class="todo todo--bugs" data-update-time="40" data-update-val="11" data-type="bug">
+						<div class="todo__image-wrapper">
+							<img class="todo__image" src="images/action_bug.png" alt="Bug Catching">
+							<span class="todo__progress">0</span>
+						</div>
 						<div class="todo__copy">
 							<ul>
 								<li>Remove Bugs</li>
@@ -96,33 +110,21 @@
 
 			<!-- BEGIN: Clock-->
 			<div class="time__wrapper">
-				<div class="time__header">
-					<img class="time__icon" src="images/icon_clock.png" alt="">
-					<strong class="time__copy">Time Updates</strong>
-					<span class="time__status-wrapper">[
-						<span class="time__status time__status--active">Disabled</span>
-						<span class="time__status">Enabled</span>
-						]
-					</span>
+				<div class="time__status-wrapper outline__small button">
+					<span class="time__status time__status--disabled time__status--active">Auto Update Disabled</span>
+					<span class="time__status time__status--enabled">Auto Update Enabled</span>
 				</div>
-				<form class="farm__form farm__form--time">
-					<label class="input__label" for="time_date">Start Date</label>
-					<input class="farm__input outline__small" name="time_date" type="date">
 
-					<strong class="input__label">Start Time (00:00 - 24:00)</strong>
-					<div class="farm__time">
-						<input class="farm__input outline__small" name="time_hour" type="number" value="0" min="0" max="24">
-						<span>:</span>
-						<input class="farm__input outline__small" name="time_minute" type="number" value="0" min="0" max="60">
-					</div>
+				<form class="farm__form farm__form--time">
+					<label class="input__label"><img class="time__icon" src="images/icon_clock.png" alt=""> Start Minute (0 - 59)</label>
+					<input class="input outline__small" name="time_minute" type="number" value="0" min="0" max="59">
 				</form>
 			</div>
 			<!-- END: Clock -->
 
 			<!-- BEGIN: Other -->
 			<div class="farm__other">
-				<button class="outline__small">DO THE THING</button>
-				<button class="farm__reset outline__small">Reset</button>
+				<button class="button farm__reset outline__small">Reset</button>
 			</div>
 			<!-- END: Other -->
 		</div>
