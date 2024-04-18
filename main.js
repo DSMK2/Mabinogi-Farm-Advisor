@@ -22,12 +22,14 @@ document.addEventListener('DOMContentLoaded', function () {
   /////////////////////////////////////////////////////////////////////////////////
   (function () {
     // DOM
-    var DOMForm = document.querySelector('.farm__form');
+    var DOMFormValues = document.querySelector('.farm__form--values');
     var DOMCrops = Array.prototype.slice.call(document.querySelectorAll('.farm__crop'), 0);
     var DOMCropLabels = Array.prototype.slice.call(document.querySelectorAll('.farm__crop-label'), 0);
-    var DOMCropSelector = DOMForm.querySelector('[name="the_crop"]');
+    var DOMCropSelector = DOMFormValues.querySelector('[name="the_crop"]');
     var DOMRate = document.querySelector('.farm__growth-rate');
     var DOMTodos = Array.prototype.slice.call(document.querySelectorAll('.todo'), 0);
+    var DOMTodosProgress = Array.prototype.slice.call(document.querySelectorAll('.todo__progress'), 0);
+    var DOMMinutes = document.querySelector('.farm__form--time [name="time_minute"]');
     // Vars
     var cropValues = {
       tomato: {
@@ -63,10 +65,17 @@ document.addEventListener('DOMContentLoaded', function () {
     };
     var cropInputs = {
       crop: '',
-      h2o: 0,
-      fert: 0,
-      bug: 0
+      h2o: 40,
+      fert: 30,
+      bug: 80,
+      updateMins: 0,
     };
+    var updateEnabled = false;
+    var updateInterval;
+    var updateNext;
+    var todoNext;
+    var todoInterval;
+    var todoTask;
 
     /////////////////////////////////////////////////////////////////////////////////
     // BEGIN: Local Storage Handling
@@ -96,19 +105,22 @@ document.addEventListener('DOMContentLoaded', function () {
       document.querySelector('.farm__crop-label[data-crop="' + cropInputs.crop + '" i]').classList.add('farm__crop-label--active');
       DOMCropSelector.value = cropInputs.crop;
 
-      cropInputs.h2o = farmVals.h2o;
-      cropInputs.fert = farmVals.fert;
-      cropInputs.bug = farmVals.bug;
-
-      DOMForm.the_h2o.value = cropInputs.h2o;
-      DOMForm.the_fert.value = cropInputs.fert;
-      DOMForm.the_bug.value = cropInputs.bug;
+      cropInputs.h2o = parseInt(farmVals.h2o ? farmVals.h2o : cropInputs.h2o);
+      cropInputs.fert = parseInt(farmVals.fert ? farmVals.fert : cropInputs.fert);
+      cropInputs.bug = parseInt(farmVals.bug ? farmVals.bug : cropInputs.bug);
+      cropInputs.updateMins = parseInt(farmVals.updateMins ? farmVals.updateMins : cropInputs.updateMins);
+      console.log(cropInputs);
+      DOMFormValues.the_h2o.value = cropInputs.h2o;
+      DOMFormValues.the_fert.value = cropInputs.fert;
+      DOMFormValues.the_bug.value = cropInputs.bug;
+      DOMMinutes.value = cropInputs.updateMins;
 
       // Insure form values are updated
       DOMCropSelector.dispatchEvent(new Event('change'));
-      DOMForm.the_h2o.dispatchEvent(new Event('change'));
-      DOMForm.the_fert.dispatchEvent(new Event('change'));
-      DOMForm.the_bug.dispatchEvent(new Event('change'));
+      DOMFormValues.the_h2o.dispatchEvent(new Event('change'));
+      DOMFormValues.the_fert.dispatchEvent(new Event('change'));
+      DOMFormValues.the_bug.dispatchEvent(new Event('change'));
+      DOMMinutes.dispatchEvent(new Event('change'));
 
       updateTodo();
     }
@@ -122,6 +134,24 @@ document.addEventListener('DOMContentLoaded', function () {
       localStorage.setItem('_farmVals', btoa(JSON.stringify(cropInputs)));
     }
 
+    function updateData(options) {
+      cropInputs.h2o = options.h2o ? options.h2o : cropInputs.h2o;
+      cropInputs.fert = options.fert ? options.fert : cropInputs.fert;
+      cropInputs.bug = options.bug ? options.bug : cropInputs.bug;
+
+      DOMFormValues.the_h2o.value = cropInputs.h2o;
+      DOMFormValues.the_fert.value = cropInputs.fert;
+      DOMFormValues.the_bug.value = cropInputs.bug;
+
+      // Insure form values are updated
+      DOMCropSelector.dispatchEvent(new Event('change'));
+      DOMFormValues.the_h2o.dispatchEvent(new Event('change'));
+      DOMFormValues.the_fert.dispatchEvent(new Event('change'));
+      DOMFormValues.the_bug.dispatchEvent(new Event('change'));
+
+      saveData();
+    }
+
     function resetData() {
       if (!isLocalStorageAvailable) {
         console.error('localStorage not available');
@@ -132,6 +162,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     /////////////////////////////////////////////////////////////////////////////////
     // END: Local Storage Handling
+    /////////////////////////////////////////////////////////////////////////////////
+
+    /////////////////////////////////////////////////////////////////////////////////
+    // BEGIN: Basic Features
     /////////////////////////////////////////////////////////////////////////////////
     function resetCrops() {
       DOMCrops.forEach(function (DOMCrop) {
@@ -186,17 +220,257 @@ document.addEventListener('DOMContentLoaded', function () {
 
       DOMRate.innerHTML = growthRate.toFixed(2);
     }
+    /////////////////////////////////////////////////////////////////////////////////
+    // END: Basic Features
+    /////////////////////////////////////////////////////////////////////////////////
+
+    /////////////////////////////////////////////////////////////////////////////////
+    // BEGIN: Time Features
+    /////////////////////////////////////////////////////////////////////////////////
+    function getDatePST(date) {
+      return new Date(date.toLocaleString('en-US', {
+        timeZone: 'America/Los_Angeles'
+      }));
+    }
+
+    function getNextUpdateTime() {
+      var dateCurrent = new Date();
+      var dateNext;
+
+      // Convert to PST
+      dateCurrent = getDatePST(dateCurrent);
+
+      // Get next update date
+      dateNext = new Date(dateCurrent.getFullYear(), dateCurrent.getMonth(), dateCurrent.getDate(), dateCurrent.getHours(), DOMMinutes.value, 0);
+
+      // If minutes exceeds start minute, increment an next hour
+      if (dateCurrent.getMinutes() >= dateNext.getMinutes()) {
+        dateNext.setHours(dateCurrent.getHours() + 1);
+      }
+      console.log('Mabinogi Farm Advisor: Next Update Time: ', dateNext, dateCurrent, dateCurrent.getHours(), DOMMinutes.value);
+
+      return dateNext;
+    }
+
+    function decrementCropValues(elapsedHours) {
+      var newH2O = 0;
+      var newFert = 0;
+      var newBug = 0;
+
+      if (!cropInputs.crop) {
+        console.error('No crop selected');
+        return;
+      }
+
+      if (typeof elapsedHours !== 'number') {
+        elapsedHours = 1;
+      }
+
+      if (elapsedHours === 0) {
+        return;
+      }
+
+      newH2O = Math.round(DOMFormValues.the_h2o.value - cropValues[cropInputs.crop].dehydration * elapsedHours);
+      newFert = Math.round(DOMFormValues.the_fert.value - cropValues[cropInputs.crop].malnourishment * elapsedHours);
+      newBug = Math.round(DOMFormValues.the_bug.value - cropValues[cropInputs.crop].bug * elapsedHours);
+
+      DOMFormValues.the_h2o.value = newH2O < 0 ? 0 : newH2O;
+      DOMFormValues.the_fert.value = newFert < 0 ? 0 : newFert;
+      DOMFormValues.the_bug.value = newBug < 0 ? 0 : newBug;
+
+      DOMFormValues.the_h2o.dispatchEvent(new Event('change'));
+      DOMFormValues.the_fert.dispatchEvent(new Event('change'));
+      DOMFormValues.the_bug.dispatchEvent(new Event('change'));
+
+      saveData();
+    }
+
+    function startTodoInterval() {
+      var dateCurrent = new Date();
+
+      if (todoInterval) {
+        clearInterval(todoInterval);
+        todoInterval = false;
+      }
+
+      if (!updateEnabled || typeof todoTask !== 'function') {
+        return;
+      }
+
+      todoInterval = setInterval(todoTask, 1000);
+    }
+
+    function stopTodoInterval() {
+      if (todoInterval) {
+        clearInterval(todoInterval);
+        todoInterval = false;
+      }
+    }
+
+    function startUpdateInterval() {
+      if (updateInterval) {
+        clearInterval(updateInterval);
+        updateInterval = false;
+      }
+
+      if (!updateEnabled) {
+        return;
+      }
+
+      updateNext = getNextUpdateTime();
+
+      // Run checks per minute
+      updateInterval = setInterval(function () {
+        var dateCurrent = new Date();
+
+        // Convert to PST
+        dateCurrent = getDatePST(dateCurrent);
+
+        if (dateCurrent.getTime() >= updateNext.getTime()) {
+          decrementCropValues();
+          updateNext = getNextUpdateTime();
+        }
+      }, 60000);
+    }
+
+    function stopUpdateInterval() {
+      if (updateInterval) {
+        clearInterval(updateInterval);
+        updateInterval = false;
+      }
+    }
+
+    DOMMinutes.addEventListener('change', function () {
+      updateNext = getNextUpdateTime();
+      cropInputs.updateMins = DOMMinutes.value;
+      saveData();
+    });
+
+    document.querySelector('.time__status-wrapper').addEventListener('click', (function () {
+      var DOMStatusDisabled = document.querySelector('.time__status-wrapper .time__status--disabled');
+      var DOMStatusEnabled = document.querySelector('.time__status-wrapper .time__status--enabled');
+
+      return function (e) {
+        e.preventDefault();
+
+        if (updateEnabled) {
+          DOMStatusDisabled.classList.add('time__status--active');
+          DOMStatusEnabled.classList.remove('time__status--active');
+          updateEnabled = false;
+
+          // Make all todo images clickable
+          DOMTodos.forEach(function (DOMTodo) {
+            DOMTodo.querySelector('.todo__progress').innerHTML = '';
+            DOMTodo.querySelector('.todo__image-wrapper').classList.remove('todo__image-wrapper--click');
+          });
+
+          stopUpdateInterval();
+        } else {
+          DOMStatusDisabled.classList.remove('time__status--active');
+          DOMStatusEnabled.classList.add('time__status--active');
+          updateEnabled = true;
+
+          // Make all todo images clickable
+          DOMTodos.forEach(function (DOMTodo) {
+            DOMTodo.querySelector('.todo__progress').innerHTML = '';
+            DOMTodo.querySelector('.todo__image-wrapper').classList.add('todo__image-wrapper--click');
+          });
+
+          startUpdateInterval();
+        }
+      }
+
+    })());
+
+    DOMTodos.forEach(function (DOMTodo) {
+      var todoTotalTimeMins = parseInt(DOMTodo.getAttribute('data-update-time'));
+      var todoVal = parseInt(DOMTodo.getAttribute('data-update-val'));
+      var todoType = DOMTodo.getAttribute('data-type');
+      var todoCurrentTime = 0;
+
+      // Inoperable without time supplied
+      if (!todoTotalTimeMins) {
+        return;
+      }
+
+      function updateTodoTime() {
+        var dateCurrent = new Date();
+        var elapsedTodo = Math.floor((todoNext.getTime() - dateCurrent.getTime()) / 1000);
+        var valUpdate = {};
+
+        todoCurrentTime = elapsedTodo;
+        todoCurrentTime = Math.max(0, todoCurrentTime);
+
+        DOMTodosProgress.forEach(function (DOMTodoProgress) {
+          DOMTodoProgress.innerHTML = todoCurrentTime;
+        });
+
+        if (dateCurrent.getTime() > todoNext.getTime()) {
+          stopTodoInterval();
+          DOMTodosProgress.forEach(function (DOMTodoProgress) {
+            DOMTodoProgress.innerHTML = '';
+          });
+          valUpdate[todoType] = cropInputs[todoType] + todoVal;
+          updateData(valUpdate);
+          todoTask = false;
+        }
+      }
+
+      DOMTodo.querySelector('.todo__image-wrapper').addEventListener('click', function (e) {
+        var dateCurrent = new Date();
+
+        e.preventDefault();
+
+
+        dateCurrent.setMinutes(dateCurrent.getMinutes() + todoTotalTimeMins);
+        todoNext = dateCurrent;
+        todoTask = updateTodoTime;
+
+        updateTodoTime();
+        startTodoInterval();
+      });
+    });
+
+    window.addEventListener('focus', function () {
+      var dateCurrent = new Date();
+      var dateCurrentPST;
+      var elapsedHours;
+
+      if (!updateEnabled) {
+        return;
+      }
+
+      // Convert to PST
+      dateCurrentPST = getDatePST(dateCurrent);
+      elapsedHours = Math.floor((dateCurrentPST.getTime() - updateNext.getTime()) / 3600000);
+
+      // Update then decrement!
+      decrementCropValues(elapsedHours);
+
+      startTodoInterval();
+      startUpdateInterval();
+    });
+
+
+    window.addEventListener('blur', function () {
+      stopTodoInterval();
+      stopUpdateInterval();
+    });
+    /////////////////////////////////////////////////////////////////////////////////
+    // END: Time Features
+    /////////////////////////////////////////////////////////////////////////////////
+
 
     /////////////////////////////////////////////////////////////////////////////////
     // BEGIN: Events
     /////////////////////////////////////////////////////////////////////////////////
-    DOMForm.addEventListener('change', function (e) {
+    DOMFormValues.addEventListener('change', function (e) {
       e.preventDefault();
 
       cropInputs.crop = DOMCropSelector.querySelector(':checked').value;
-      cropInputs.h2o = DOMForm.the_h2o.value;
-      cropInputs.fert = DOMForm.the_fert.value;
-      cropInputs.bug = DOMForm.the_bug.value;
+      cropInputs.h2o = DOMFormValues.the_h2o.value;
+      cropInputs.fert = DOMFormValues.the_fert.value;
+      cropInputs.bug = DOMFormValues.the_bug.value;
 
       saveData();
       updateTodo();
@@ -254,19 +528,20 @@ document.addEventListener('DOMContentLoaded', function () {
       cropInputs.fert = 30;
       cropInputs.bug = 80;
 
-      DOMForm.the_h2o.value = cropInputs.h2o;
-      DOMForm.the_fert.value = cropInputs.fert;
-      DOMForm.the_bug.value = cropInputs.bug;
+      DOMFormValues.the_h2o.value = cropInputs.h2o;
+      DOMFormValues.the_fert.value = cropInputs.fert;
+      DOMFormValues.the_bug.value = cropInputs.bug;
 
       DOMRate.innerHTML = '0.00';
 
       DOMCropSelector.dispatchEvent(new Event('change'));
-      DOMForm.the_h2o.dispatchEvent(new Event('change'));
-      DOMForm.the_fert.dispatchEvent(new Event('change'));
-      DOMForm.the_bug.dispatchEvent(new Event('change'));
+      DOMFormValues.the_h2o.dispatchEvent(new Event('change'));
+      DOMFormValues.the_fert.dispatchEvent(new Event('change'));
+      DOMFormValues.the_bug.dispatchEvent(new Event('change'));
     });
 
     window.addEventListener('blur', function () {
+      // Display actual selected crop on blur
       resetCropLabels();
       document.querySelector('.farm__crop-label[data-crop="' + cropInputs.crop + '" i]').classList.add('farm__crop-label--active');
     });

@@ -22,7 +22,7 @@
 			<div class="hidden" role="heading" aria-level="2">Advisor</div>
 
 			<!-- BEGIN: Inputs -->
-			<form class="farm__form">
+			<form class="farm__form farm__form--values">
 				<div class="farm__crops">
 					<a class="farm__crop outline__small" href="#" title="Tomato"><img src="images/crop_tomato.png" alt="Tomato"></a>
 					<a class="farm__crop outline__small" href="#" title="Cabbage"><img src="images/crop_cabbage.png" alt="Cabbage"></a>
@@ -46,21 +46,29 @@
 					<option value="pumpkin">Pumpkin</option>
 					<option value="strawberry">Strawberry</option>
 				</select>
-				<label class="farm__label" for="the_h2o">H2O</label>
-				<input class="farm__input outline__small" name="the_h2o" value="40" type="number">
-				<label class="farm__label" for="the_fert">FERT</label>
-				<input class="farm__input outline__small" name="the_fert" value="30" type="number">
-				<label class="farm__label" for="the_bug">BUG</label>
-				<input class="farm__input outline__small" name="the_bug" value="80" type="number">
+				<label class="input__label" for="the_h2o">H2O</label>
+				<input class="input outline__small" name="the_h2o" value="40" type="number">
+				<label class="input__label" for="the_fert">FERT</label>
+				<input class="input outline__small" name="the_fert" value="30" type="number">
+				<label class="input__label" for="the_bug">BUG</label>
+				<input class="input outline__small" name="the_bug" value="80" type="number">
 			</form>
 			<!-- END: Outputs -->
 
 			<!-- BEGIN: Outputs-->
 			<div class="farm__outputs">
 				<ul class="farm__todo">
-					<li class="todo todo--none todo--active"><img class="todo__image" src="images/action_unknown.png" alt="Unknown"></li>
-					<li class="todo todo--water">
-						<img class="todo__image" src="images/action_water.png" alt="Watering">
+					<li class="todo todo--none todo--active">
+						<div class="todo__image-wrapper">
+							<img class="todo__image" src="images/action_unknown.png" alt="Unknown">
+							<span class="todo__progress">0</span>
+						</div>
+					</li>
+					<li class="todo todo--water" data-update-time="20" data-update-val="5" data-type="h2o">
+						<div class="todo__image-wrapper">
+							<img class="todo__image" src="images/action_water.png" alt="Watering">
+							<span class="todo__progress">0</span>
+						</div>
 						<div class="todo__copy">
 							<ul>
 								<li>Water</li>
@@ -68,8 +76,11 @@
 							</ul>
 						</div>
 					</li>
-					<li class="todo todo--fertilize">
-						<img class="todo__image" src="images/action_fertilize.png" alt="Fertilizing">
+					<li class="todo todo--fertilize" data-update-time="30" data-update-val="7" data-type="fert">
+						<div class="todo__image-wrapper">
+							<img class="todo__image" src="images/action_fertilize.png" alt="Fertilizing">
+							<span class="todo__progress">0</span>
+						</div>
 						<div class="todo__copy">
 							<ul>
 								<li>Fertilize</li>
@@ -77,8 +88,11 @@
 							</ul>
 						</div>
 					</li>
-					<li class="todo todo--bugs">
-						<img class="todo__image" src="images/action_bug.png" alt="Bug Catching">
+					<li class="todo todo--bugs" data-update-time="40" data-update-val="11" data-type="bug">
+						<div class="todo__image-wrapper">
+							<img class="todo__image" src="images/action_bug.png" alt="Bug Catching">
+							<span class="todo__progress">0</span>
+						</div>
 						<div class="todo__copy">
 							<ul>
 								<li>Remove Bugs</li>
@@ -94,9 +108,23 @@
 			</div>
 			<!-- END: Outputs -->
 
+			<!-- BEGIN: Clock-->
+			<div class="time__wrapper">
+				<div class="time__status-wrapper outline__small button">
+					<span class="time__status time__status--disabled time__status--active">Auto Update Disabled</span>
+					<span class="time__status time__status--enabled">Auto Update Enabled</span>
+				</div>
+
+				<form class="farm__form farm__form--time">
+					<label class="input__label"><img class="time__icon" src="images/icon_clock.png" alt=""> Start Minute (0 - 59)</label>
+					<input class="input outline__small" name="time_minute" type="number" value="0" min="0" max="59">
+				</form>
+			</div>
+			<!-- END: Clock -->
+
 			<!-- BEGIN: Other -->
 			<div class="farm__other">
-				<button class="farm__reset outline__small">Reset</button>
+				<button class="button farm__reset outline__small">Reset</button>
 			</div>
 			<!-- END: Other -->
 		</div>
@@ -113,6 +141,13 @@
 				<li>Click a crop icon</li>
 				<li>Enter current H2O, FERT, and BUG values</li>
 				<li>Execute the recommended action</li>
+			</ol>
+			<h3 class="info__header">How to Use Auto Update</h3>
+			<p>WIP! Experimental and potentially inaccurate!</p>
+			<ol class="info__list">
+				<li>Enter in plant time starting minutes</li>
+				<li>Click on the "Auto Update..." button</li>
+				<li>Click on action icon to auto increment H2O, FERT, or BUG values</li>
 			</ol>
 			<div class="info__copy-wrapper outline__large">
 				<p class="info__copy">Crop and values are saved, so you don't need to reenter values every time you visit the tool.</p>

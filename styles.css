@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   padding: 0;
   margin: 0;
   display: flex;
@@ -20,6 +21,10 @@ h2 {
   margin-top: 0;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 .outline__large {
   border: 3px solid #000;
   border-radius: 15px;
@@ -38,6 +43,43 @@ h2 {
 
 .hidden {
   display: none;
+}
+
+.input {
+  padding: 5px;
+}
+
+.input__label {
+  margin: 5px 0px;
+  font-weight: bold;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: center;
+}
+
+.button {
+  width: 100%;
+  background-color: #fff;
+  text-transform: uppercase;
+  padding: 15px;
+  cursor: pointer;
+  transition: transform 0.1s;
+  font-family: Tahoma, sans-serif;
+  font-size: 15px;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+.button:hover {
+  background-color: #000;
+  color: #fff;
+  transform: scale(1.05);
+}
+
+.input__label:nth-of-type(2) {
+  margin-top: 0;
 }
 
 .farm__content {
@@ -78,15 +120,6 @@ h2 {
   flex-direction: column;
   width: 100%;
   margin-bottom: 15px;
-}
-
-.farm__label {
-  margin: 5px 0px;
-  font-weight: bold;
-}
-
-.farm__label:nth-of-type(2) {
-  margin-top: 0;
 }
 
 .farm__crops {
@@ -130,9 +163,7 @@ h2 {
   font-size: 15px;
 }
 
-.farm__input {
-  padding: 5px;
-}
+
 
 .farm__crop-label--active {
   display: block;
@@ -142,6 +173,7 @@ h2 {
 [name="the_crop"] {
   display: none;
 }
+
 /* END: Farm Form */
 
 /* BEGIN: Farm Todo */
@@ -162,6 +194,31 @@ h2 {
   align-content: center;
 }
 
+.todo__image-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.todo__image-wrapper--click {
+  cursor: pointer;
+}
+
+.todo__progress {
+  bottom: 2px;
+  right: 2px;
+  position: absolute;
+  color: #fff;
+  text-shadow: 0px 2px 1px #000000;
+  font-size: 12px;
+  display: none;
+}
+
+.todo__image-wrapper--click .todo__progress {
+  display: block;
+}
+
 .todo--active {
   display: flex;
 }
@@ -169,26 +226,57 @@ h2 {
 .todo__copy {
   margin-left: 15px;
 }
+
 /* END: Farm Todo */
 
-/* BEGIN: Farm Other */
-.farm__reset {
-  width: 100%;
-  background-color: #fff;
-  text-transform: uppercase;
-  padding: 15px;
-  cursor: pointer;
-  transition: transform 0.1s;
-  font-family: Tahoma, sans-serif;
-  font-size: 15px;
+/* BEGIN: Time */
+.farm__time {
+  display: flex;
+  justify-content: stretch;
+  align-content: center;
+  align-items: center;
 }
 
-.farm__reset:hover {
-  background-color: #000;
-  color: #fff;
-  transform: scale(1.05);
+.farm__time>input {
+  flex-grow: 1;
 }
-/* END: Farm Other */
+
+.farm__time span {
+  font-weight: bold;
+}
+
+.time__icon {
+  display: block;
+  height: 13px;
+  width: 13px;
+  flex-shrink: 0;
+  flex-grow: 0;
+  margin: 0px 5px 0px 0px;
+}
+
+.time__status-wrapper {
+  display: flex;
+}
+
+.time__status {
+  display: none;
+}
+
+.time__status--active {
+  display: block;
+}
+
+.time__status--disabled {
+  color: #f00;
+}
+
+/*
+.time__status--enabled {
+  color: #0f0;
+}
+*/
+
+/* END: Time */
 
 /* BEGIN: Farm Info */
 .info__toggle {
@@ -206,7 +294,7 @@ h2 {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0,0,0,0.7);
+  background-color: rgba(0, 0, 0, 0.7);
   opacity: 0;
   display: block;
   overflow: hidden;
