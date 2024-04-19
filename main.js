@@ -247,7 +247,6 @@ document.addEventListener('DOMContentLoaded', function () {
       if (dateCurrent.getMinutes() >= dateNext.getMinutes()) {
         dateNext.setHours(dateCurrent.getHours() + 1);
       }
-      console.log('Mabinogi Farm Advisor: Next Update Time: ', dateNext, dateCurrent, dateCurrent.getHours(), DOMMinutes.value);
 
       return dateNext;
     }
@@ -270,9 +269,9 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      newH2O = Math.round(DOMFormValues.the_h2o.value - cropValues[cropInputs.crop].dehydration * elapsedHours);
-      newFert = Math.round(DOMFormValues.the_fert.value - cropValues[cropInputs.crop].malnourishment * elapsedHours);
-      newBug = Math.round(DOMFormValues.the_bug.value - cropValues[cropInputs.crop].bug * elapsedHours);
+      newH2O = Math.floor(DOMFormValues.the_h2o.value - cropValues[cropInputs.crop].dehydration * elapsedHours);
+      newFert = Math.floor(DOMFormValues.the_fert.value - cropValues[cropInputs.crop].malnourishment * elapsedHours);
+      newBug = Math.floor(DOMFormValues.the_bug.value - cropValues[cropInputs.crop].bug * elapsedHours);
 
       DOMFormValues.the_h2o.value = newH2O < 0 ? 0 : newH2O;
       DOMFormValues.the_fert.value = newFert < 0 ? 0 : newFert;
@@ -329,6 +328,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (dateCurrent.getTime() >= updateNext.getTime()) {
           decrementCropValues();
           updateNext = getNextUpdateTime();
+          console.log('Mabinogi Farm Advisor: Next Update Time: ', updateNext);
         }
       }, 60000);
     }
@@ -410,7 +410,7 @@ document.addEventListener('DOMContentLoaded', function () {
           DOMTodosProgress.forEach(function (DOMTodoProgress) {
             DOMTodoProgress.innerHTML = '';
           });
-          valUpdate[todoType] = cropInputs[todoType] + todoVal;
+          valUpdate[todoType] = parseInt(cropInputs[todoType]) + parseInt(todoVal);
           updateData(valUpdate);
           todoTask = false;
         }
@@ -443,6 +443,8 @@ document.addEventListener('DOMContentLoaded', function () {
       // Convert to PST
       dateCurrentPST = getDatePST(dateCurrent);
       elapsedHours = Math.floor((dateCurrentPST.getTime() - updateNext.getTime()) / 3600000);
+
+      console.log('Mabinogi Farm Advisor: ' + elapsedHours + ' elapsed')
 
       // Update then decrement!
       decrementCropValues(elapsedHours);
