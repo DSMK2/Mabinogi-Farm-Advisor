@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function () {
         elapsedHours = 1;
       }
 
-      if (elapsedHours === 0) {
+      if (elapsedHours <= 0) {
         return;
       }
 
