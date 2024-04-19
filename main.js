@@ -109,10 +109,10 @@ document.addEventListener('DOMContentLoaded', function () {
       cropInputs.fert = parseInt(farmVals.fert ? farmVals.fert : cropInputs.fert);
       cropInputs.bug = parseInt(farmVals.bug ? farmVals.bug : cropInputs.bug);
       cropInputs.updateMins = parseInt(farmVals.updateMins ? farmVals.updateMins : cropInputs.updateMins);
-      console.log(cropInputs);
-      DOMFormValues.the_h2o.value = cropInputs.h2o;
-      DOMFormValues.the_fert.value = cropInputs.fert;
-      DOMFormValues.the_bug.value = cropInputs.bug;
+
+      DOMFormValues.the_h2o.value = Math.round(cropInputs.h2o);
+      DOMFormValues.the_fert.value = Math.round(cropInputs.fert);
+      DOMFormValues.the_bug.value = Math.round(cropInputs.bug);
       DOMMinutes.value = cropInputs.updateMins;
 
       // Insure form values are updated
@@ -139,9 +139,9 @@ document.addEventListener('DOMContentLoaded', function () {
       cropInputs.fert = options.fert ? options.fert : cropInputs.fert;
       cropInputs.bug = options.bug ? options.bug : cropInputs.bug;
 
-      DOMFormValues.the_h2o.value = cropInputs.h2o;
-      DOMFormValues.the_fert.value = cropInputs.fert;
-      DOMFormValues.the_bug.value = cropInputs.bug;
+      DOMFormValues.the_h2o.value = Math.round(cropInputs.h2o);
+      DOMFormValues.the_fert.value = Math.round(cropInputs.fert);
+      DOMFormValues.the_bug.value = Math.round(cropInputs.bug);
 
       // Insure form values are updated
       DOMCropSelector.dispatchEvent(new Event('change'));
@@ -149,6 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
       DOMFormValues.the_fert.dispatchEvent(new Event('change'));
       DOMFormValues.the_bug.dispatchEvent(new Event('change'));
 
+      console.log(cropInputs);
       saveData();
     }
 
@@ -269,19 +270,15 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      newH2O = Math.floor(DOMFormValues.the_h2o.value - cropValues[cropInputs.crop].dehydration * elapsedHours);
-      newFert = Math.floor(DOMFormValues.the_fert.value - cropValues[cropInputs.crop].malnourishment * elapsedHours);
-      newBug = Math.floor(DOMFormValues.the_bug.value - cropValues[cropInputs.crop].bug * elapsedHours);
+      newH2O = cropInputs.h2o - cropValues[cropInputs.crop].dehydration * elapsedHours;
+      newFert = cropInputs.fert - cropValues[cropInputs.crop].malnourishment * elapsedHours;
+      newBug = cropInputs.bug - cropValues[cropInputs.crop].bug * elapsedHours;
 
-      DOMFormValues.the_h2o.value = newH2O < 0 ? 0 : newH2O;
-      DOMFormValues.the_fert.value = newFert < 0 ? 0 : newFert;
-      DOMFormValues.the_bug.value = newBug < 0 ? 0 : newBug;
-
-      DOMFormValues.the_h2o.dispatchEvent(new Event('change'));
-      DOMFormValues.the_fert.dispatchEvent(new Event('change'));
-      DOMFormValues.the_bug.dispatchEvent(new Event('change'));
-
-      saveData();
+      updateData({
+        h2o: newH2O,
+        fert: newFert,
+        bug: newBug
+      });
     }
 
     function startTodoInterval() {
@@ -383,7 +380,7 @@ document.addEventListener('DOMContentLoaded', function () {
     })());
 
     DOMTodos.forEach(function (DOMTodo) {
-      var todoTotalTimeMins = parseInt(DOMTodo.getAttribute('data-update-time'));
+      var todoTotalTimeMins = parseFloat(DOMTodo.getAttribute('data-update-time'));
       var todoVal = parseInt(DOMTodo.getAttribute('data-update-val'));
       var todoType = DOMTodo.getAttribute('data-type');
       var todoCurrentTime = 0;
@@ -442,9 +439,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
       // Convert to PST
       dateCurrentPST = getDatePST(dateCurrent);
-      elapsedHours = Math.floor((dateCurrentPST.getTime() - updateNext.getTime()) / 3600000);
+      elapsedHours = Math.max(0, Math.floor((dateCurrentPST.getTime() - updateNext.getTime()) / 3600000));
 
-      console.log('Mabinogi Farm Advisor: ' + elapsedHours + ' elapsed')
+      console.log('Mabinogi Farm Advisor: ' + elapsedHours + ' elapsed', dateCurrentPST, updateNext)
 
       // Update then decrement!
       decrementCropValues(elapsedHours);
