@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function () {
       return false;
     }
   })();
+  var notificationWorker
 
   /////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////
@@ -29,7 +30,6 @@ document.addEventListener('DOMContentLoaded', function () {
     var DOMRate = document.querySelector('.farm__growth-rate');
     var DOMTodos = Array.prototype.slice.call(document.querySelectorAll('.todo'), 0);
     var DOMTodosProgress = Array.prototype.slice.call(document.querySelectorAll('.todo__progress'), 0);
-    var DOMMinutes = document.querySelector('.farm__form--time [name="time_minute"]');
     // Vars
     var cropValues = {
       tomato: {
@@ -70,9 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
       bug: 80,
       updateMins: 0,
     };
-    var updateEnabled = false;
-    var updateInterval;
-    var updateNext;
+    var todoNotification;
     var todoNext;
     var todoInterval;
     var todoTask;
@@ -113,14 +111,12 @@ document.addEventListener('DOMContentLoaded', function () {
       DOMFormValues.the_h2o.value = Math.round(cropInputs.h2o);
       DOMFormValues.the_fert.value = Math.round(cropInputs.fert);
       DOMFormValues.the_bug.value = Math.round(cropInputs.bug);
-      DOMMinutes.value = cropInputs.updateMins;
 
       // Insure form values are updated
       DOMCropSelector.dispatchEvent(new Event('change'));
       DOMFormValues.the_h2o.dispatchEvent(new Event('change'));
       DOMFormValues.the_fert.dispatchEvent(new Event('change'));
       DOMFormValues.the_bug.dispatchEvent(new Event('change'));
-      DOMMinutes.dispatchEvent(new Event('change'));
 
       updateTodo();
     }
@@ -193,6 +189,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function updateTodo() {
+      var DOMTargetTodo;
       var dehydration;
       var malnourishment;
       var bugs;
@@ -212,11 +209,17 @@ document.addEventListener('DOMContentLoaded', function () {
       resetTodos();
 
       if (dehydration > malnourishment && dehydration > bugs) {
-        document.querySelector('.todo--water').classList.add('todo--active');
+        DOMTargetTodo = document.querySelector('.todo--water');
       } else if (malnourishment > bugs) {
-        document.querySelector('.todo--fertilize').classList.add('todo--active');
+        DOMTargetTodo = document.querySelector('.todo--fertilize');
       } else {
-        document.querySelector('.todo--bugs').classList.add('todo--active');
+        DOMTargetTodo = document.querySelector('.todo--bugs');
+      }
+
+      if (!DOMTargetTodo.classList.contains('.todo--active')) {
+        DOMTargetTodo.classList.add('todo--active');
+        clearTodoInterval();
+        stopNotification();
       }
 
       DOMRate.innerHTML = growthRate.toFixed(2);
@@ -228,56 +231,16 @@ document.addEventListener('DOMContentLoaded', function () {
     /////////////////////////////////////////////////////////////////////////////////
     // BEGIN: Time Features
     /////////////////////////////////////////////////////////////////////////////////
-    function getDatePST(date) {
-      return new Date(date.toLocaleString('en-US', {
-        timeZone: 'America/Los_Angeles'
-      }));
-    }
-
-    function getNextUpdateTime() {
-      var dateCurrent = new Date();
-      var dateNext;
-
-      // Convert to PST
-      dateCurrent = getDatePST(dateCurrent);
-
-      // Get next update date
-      dateNext = new Date(dateCurrent.getFullYear(), dateCurrent.getMonth(), dateCurrent.getDate(), dateCurrent.getHours(), DOMMinutes.value, 0);
-
-      // If minutes exceeds start minute, increment an next hour
-      if (dateCurrent.getMinutes() >= dateNext.getMinutes()) {
-        dateNext.setHours(dateCurrent.getHours() + 1);
+    function clearTodoInterval() {
+      if (todoInterval) {
+        clearInterval(todoInterval);
+        todoInterval = false;
       }
 
-      return dateNext;
-    }
+      todoTask = false;
 
-    function decrementCropValues(elapsedHours) {
-      var newH2O = 0;
-      var newFert = 0;
-      var newBug = 0;
-
-      if (!cropInputs.crop) {
-        console.error('No crop selected');
-        return;
-      }
-
-      if (typeof elapsedHours !== 'number') {
-        elapsedHours = 1;
-      }
-
-      if (elapsedHours <= 0) {
-        return;
-      }
-
-      newH2O = cropInputs.h2o - cropValues[cropInputs.crop].dehydration * elapsedHours;
-      newFert = cropInputs.fert - cropValues[cropInputs.crop].malnourishment * elapsedHours;
-      newBug = cropInputs.bug - cropValues[cropInputs.crop].bug * elapsedHours;
-
-      updateData({
-        h2o: newH2O,
-        fert: newFert,
-        bug: newBug
+      DOMTodosProgress.forEach(function (DOMTodoProgress) {
+        DOMTodoProgress.innerHTML = '';
       });
     }
 
@@ -289,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function () {
         todoInterval = false;
       }
 
-      if (!updateEnabled || typeof todoTask !== 'function') {
+      if (typeof todoTask !== 'function') {
         return;
       }
 
@@ -303,87 +266,40 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
 
-    function startUpdateInterval() {
-      if (updateInterval) {
-        clearInterval(updateInterval);
-        updateInterval = false;
-      }
-
-      if (!updateEnabled) {
-        return;
-      }
-
-      updateNext = getNextUpdateTime();
-
-      // Run checks per minute
-      updateInterval = setInterval(function () {
-        var dateCurrent = new Date();
-
-        // Convert to PST
-        dateCurrent = getDatePST(dateCurrent);
-
-        if (dateCurrent.getTime() >= updateNext.getTime()) {
-          decrementCropValues();
-          updateNext = getNextUpdateTime();
-          console.log('Mabinogi Farm Advisor: Next Update Time: ', updateNext);
-        }
-      }, 60000);
-    }
-
-    function stopUpdateInterval() {
-      if (updateInterval) {
-        clearInterval(updateInterval);
-        updateInterval = false;
+    // Stops all notifications
+    function stopNotification() {
+      if (notificationWorker) {
+        notificationWorker.terminate();
+        notificationWorker = undefined;
       }
     }
-
-    DOMMinutes.addEventListener('change', function () {
-      updateNext = getNextUpdateTime();
-      cropInputs.updateMins = DOMMinutes.value;
-      saveData();
-    });
-
-    document.querySelector('.time__status-wrapper').addEventListener('click', (function () {
-      var DOMStatusDisabled = document.querySelector('.time__status-wrapper .time__status--disabled');
-      var DOMStatusEnabled = document.querySelector('.time__status-wrapper .time__status--enabled');
-
-      return function (e) {
-        e.preventDefault();
-
-        if (updateEnabled) {
-          DOMStatusDisabled.classList.add('time__status--active');
-          DOMStatusEnabled.classList.remove('time__status--active');
-          updateEnabled = false;
-
-          // Make all todo images clickable
-          DOMTodos.forEach(function (DOMTodo) {
-            DOMTodo.querySelector('.todo__progress').innerHTML = '';
-            DOMTodo.querySelector('.todo__image-wrapper').classList.remove('todo__image-wrapper--click');
-          });
-
-          stopUpdateInterval();
-        } else {
-          DOMStatusDisabled.classList.remove('time__status--active');
-          DOMStatusEnabled.classList.add('time__status--active');
-          updateEnabled = true;
-
-          // Make all todo images clickable
-          DOMTodos.forEach(function (DOMTodo) {
-            DOMTodo.querySelector('.todo__progress').innerHTML = '';
-            DOMTodo.querySelector('.todo__image-wrapper').classList.add('todo__image-wrapper--click');
-          });
-
-          startUpdateInterval();
-        }
-      }
-
-    })());
 
     DOMTodos.forEach(function (DOMTodo) {
       var todoTotalTimeMins = parseFloat(DOMTodo.getAttribute('data-update-time'));
       var todoVal = parseInt(DOMTodo.getAttribute('data-update-val'));
       var todoType = DOMTodo.getAttribute('data-type');
       var todoCurrentTime = 0;
+      var notificationOptions = {
+        body: (function () {
+          switch (todoType) {
+
+            case 'h2o':
+              return 'Your crops have been watered!'
+
+            case 'fert':
+              return 'Your crops have been fertilized!'
+
+            case 'bug':
+              return 'Your crops have been pest controlled!'
+
+            default:
+              break;
+          }
+        })(),
+        icon: '/images/icon_clock.png',
+        badge: '/images/icon_clock.png',
+        requireInteraction: true
+      };
 
       // Inoperable without time supplied
       if (!todoTotalTimeMins) {
@@ -393,7 +309,6 @@ document.addEventListener('DOMContentLoaded', function () {
       function updateTodoTime() {
         var dateCurrent = new Date();
         var elapsedTodo = Math.floor((todoNext.getTime() - dateCurrent.getTime()) / 1000);
-        var valUpdate = {};
 
         todoCurrentTime = elapsedTodo;
         todoCurrentTime = Math.max(0, todoCurrentTime);
@@ -407,9 +322,25 @@ document.addEventListener('DOMContentLoaded', function () {
           DOMTodosProgress.forEach(function (DOMTodoProgress) {
             DOMTodoProgress.innerHTML = '';
           });
-          valUpdate[todoType] = parseInt(cropInputs[todoType]) + parseInt(todoVal);
-          updateData(valUpdate);
           todoTask = false;
+
+          stopNotification();
+        }
+      }
+
+      // Stop existing notifications and create a new one
+      function startNotification(startTime) {
+        stopNotification();
+
+        if (Worker) {
+          notificationWorker = new Worker('notification_worker.js');
+        }
+
+        if (notificationWorker && notificationWorker) {
+          notificationWorker.postMessage({
+            time: startTime.getTime(),
+            options: notificationOptions
+          });
         }
       }
 
@@ -418,10 +349,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
         e.preventDefault();
 
-
         dateCurrent.setMinutes(dateCurrent.getMinutes() + todoTotalTimeMins);
         todoNext = dateCurrent;
         todoTask = updateTodoTime;
+
+        // Kick off notifications
+        if (Notification) {
+          if (Notification.permission !== 'granted') {
+            Notification.requestPermission().then(function (permission) {
+              if (permission === 'granted') {
+                startNotification(dateCurrent);
+              }
+            });
+          } else {
+            startNotification(dateCurrent);
+          }
+        }
 
         updateTodoTime();
         startTodoInterval();
@@ -429,31 +372,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     window.addEventListener('focus', function () {
-      var dateCurrent = new Date();
-      var dateCurrentPST;
-      var elapsedHours;
-
-      if (!updateEnabled) {
-        return;
-      }
-
-      // Convert to PST
-      dateCurrentPST = getDatePST(dateCurrent);
-      elapsedHours = Math.max(0, Math.floor((dateCurrentPST.getTime() - updateNext.getTime()) / 3600000));
-
-      console.log('Mabinogi Farm Advisor: ' + elapsedHours + ' elapsed', dateCurrentPST, updateNext)
-
-      // Update then decrement!
-      decrementCropValues(elapsedHours);
-
       startTodoInterval();
-      startUpdateInterval();
     });
 
 
     window.addEventListener('blur', function () {
       stopTodoInterval();
-      stopUpdateInterval();
     });
     /////////////////////////////////////////////////////////////////////////////////
     // END: Time Features

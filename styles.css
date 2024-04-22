@@ -163,8 +163,6 @@ h2 {
   font-size: 15px;
 }
 
-
-
 .farm__crop-label--active {
   display: block;
 }
@@ -199,23 +197,21 @@ h2 {
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s;
 }
 
-.todo__image-wrapper--click {
-  cursor: pointer;
+.todo__image-wrapper:hover {
+  transform: scale(1.2);
 }
 
 .todo__progress {
   bottom: 2px;
-  right: 2px;
+  left: 2px;
   position: absolute;
   color: #fff;
   text-shadow: 0px 2px 1px #000000;
   font-size: 12px;
-  display: none;
-}
-
-.todo__image-wrapper--click .todo__progress {
   display: block;
 }
 
@@ -228,55 +224,6 @@ h2 {
 }
 
 /* END: Farm Todo */
-
-/* BEGIN: Time */
-.farm__time {
-  display: flex;
-  justify-content: stretch;
-  align-content: center;
-  align-items: center;
-}
-
-.farm__time>input {
-  flex-grow: 1;
-}
-
-.farm__time span {
-  font-weight: bold;
-}
-
-.time__icon {
-  display: block;
-  height: 13px;
-  width: 13px;
-  flex-shrink: 0;
-  flex-grow: 0;
-  margin: 0px 5px 0px 0px;
-}
-
-.time__status-wrapper {
-  display: flex;
-}
-
-.time__status {
-  display: none;
-}
-
-.time__status--active {
-  display: block;
-}
-
-.time__status--disabled {
-  color: #f00;
-}
-
-/*
-.time__status--enabled {
-  color: #0f0;
-}
-*/
-
-/* END: Time */
 
 /* BEGIN: Farm Info */
 .info__toggle {
