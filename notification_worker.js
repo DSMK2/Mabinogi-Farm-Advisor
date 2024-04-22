@@ -1,8 +1,8 @@
 var notificationInterval;
 
 self.onmessage = function(message) {
-    var notificationOptions = message.options;
-    var notificationTime = message.time;
+    var notificationOptions = message.data.options;
+    var notificationTime = message.data.time;
     
     if (notificationInterval) {
         clearInterval(notificationInterval);
